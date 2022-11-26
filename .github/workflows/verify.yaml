@@ -8,21 +8,18 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v3
-
             - name: Set up Go
               uses: actions/setup-go@v3
               with:
                   go-version: 1.18
-
             - name: Check if go fmt is required
               id: gofmt
               uses: Jerome1337/gofmt-action@v1.0.5
               with:
                   gofmt-path: "./"
                   gofmt-flags: "-l -d"
-
             - name: Add comment to PR if previous step failed
+              if: ${{ steps.gofmt.conclusion == 'failure' }}
               uses: mshick/add-pr-comment@v2
               with:
                   message: ${{ steps.gofmt.outputs }}
-              if: ${{ failure() && steps.gofmt.conclusion == 'failure' }}
