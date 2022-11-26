@@ -6,8 +6,6 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest
-        outputs:
-            gofmt: ${{ steps.gomft.outputs.gofmt-output }}
         steps:
             - uses: actions/checkout@v3
             - name: Set up Go
@@ -20,13 +18,10 @@ jobs:
               with:
                   gofmt-path: "./"
                   gofmt-flags: "-d -l"
-    noticiation:
-        runs-on: ubuntu-latest
-        steps:
             - name: Add comment to PR
               if: needs.build.steps.gofmt.outcome == 'failure'
               uses: mshick/add-pr-comment@v2
               with:
                   message: |
                     **Failed PR Check**
-                    "```${{ needs.build.outputs.gofmt }}```"
+                    "```${{ steps.gomft.outputs.gofmt-output }}```"
