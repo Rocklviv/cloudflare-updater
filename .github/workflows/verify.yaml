@@ -17,11 +17,12 @@ jobs:
               uses: Jerome1337/gofmt-action@v1.0.5
               with:
                   gofmt-path: "./"
-                  gofmt-flags: "-l -d"
+                  gofmt-flags: "-d"
+
             - name: Add comment to PR
               if: failure() && steps.gofmt.outcome == 'failure'
               uses: mshick/add-pr-comment@v2
               with:
                   message: |
                     **Failed PR Check**
-                    "${{ steps.gofmt.outputs.gofmt-output.description }}"
+                    ${{ steps.gofmt.outputs.gofmt-output }}
