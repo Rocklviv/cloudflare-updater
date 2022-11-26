@@ -18,10 +18,14 @@ jobs:
               with:
                   gofmt-path: "./"
                   gofmt-flags: "-d -l"
+    commentPR:
+        runs-on: ubuntu-latest
+        needs: build
+        steps:
             - name: Add comment to PR
-              if: failure() && steps.gofmt.outcome == 'failure'
+              if: failure() && jobs.build.steps.gofmt.outcome == 'failure'
               uses: mshick/add-pr-comment@v2
               with:
                   message: |
                     **Failed PR Check**
-                    "```${{ steps.gomft.outputs.gofmt-output.value }}```"
+                    "${{ steps.gomft.outputs.gofmt-output.value }}"
