@@ -1,0 +1,21 @@
+name: Go code verify
+on:
+    pull_request:
+        types: [opened, reopened]
+jobs:
+    build:
+
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+
+            - name: Set up Go
+              uses: actions/setup-go@v3
+              with:
+                  go-version: 1.18
+
+            - name: Check if go fmt is required
+              uses: Jerome1337/gofmt-action@v1.0.5
+              with:
+                  gofmt-path: "./..."
+                  gofmt-flags: "-l -d"
