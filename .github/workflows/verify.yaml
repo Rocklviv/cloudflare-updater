@@ -24,4 +24,4 @@ jobs:
               with:
                   message: |
                     **Failed PR Check**
-                    "${{ steps.gofmt.outputs.stdout }}"
+                    "${{ steps.gofmt.outputs.gofmt-output }}"
