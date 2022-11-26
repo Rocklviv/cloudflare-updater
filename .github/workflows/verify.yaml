@@ -21,6 +21,7 @@ jobs:
                   gofmt-path: "./"
                   gofmt-flags: "-d -l"
     noticiation:
+        runs-on: ubuntu-latest
         steps:
             - name: Add comment to PR
               if: failure() && steps.gofmt.outcome == 'failure'
