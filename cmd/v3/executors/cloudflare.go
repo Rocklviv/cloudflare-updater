@@ -78,46 +78,46 @@ func (cl *cloudFlare) CheckForUpdates(ip string) (bool, error) {
 		cl.domainATypeID = results.Result[k].ID
 	}
 
-    cl.log.Info(fmt.Sprintf("IP in CloudFlare DNS A record %s", cl.ipInCloudDNS))
+	cl.log.Info(fmt.Sprintf("IP in CloudFlare DNS A record %s", cl.ipInCloudDNS))
 	cl.log.Info("Compare current public IP with IP in CloudFlare DNS")
 	if cl.ipInCloudDNS == ip {
-        cl.log.Info("IP address still same, nothing to change")
+		cl.log.Info("IP address still same, nothing to change")
 		return false, nil
 	}
 	return true, nil
 }
 
 func (cl *cloudFlare) Update(ip string) error {
-    var results CloudDNSResult
-    data, err := json.Marshal(UpdateDNSRequest{
-        Type:    "A",
-        Content: ip,
-        Name:    cl.domainName,
-        TTL:     1,
-        Proxied: true,
-        })
+	var results CloudDNSResult
+	data, err := json.Marshal(UpdateDNSRequest{
+		Type:    "A",
+		Content: ip,
+		Name:    cl.domainName,
+		TTL:     1,
+		Proxied: true,
+	})
 
-    if err != nil {
-        return fmt.Errorf("Cannot marshal object")
-    }
+	if err != nil {
+		return fmt.Errorf("Cannot marshal object")
+	}
 
-    url := fmt.Sprintf("%s/zones/%s/dns_records/%s", cl.cloudFlareAPIURL, cl.cloudFlareZoneID, cl.domainATypeID)
-    cl.log.Info(strings.TrimSuffix(fmt.Sprintln("Request URL: ", url), "\n"))
+	url := fmt.Sprintf("%s/zones/%s/dns_records/%s", cl.cloudFlareAPIURL, cl.cloudFlareZoneID, cl.domainATypeID)
+	cl.log.Info(strings.TrimSuffix(fmt.Sprintln("Request URL: ", url), "\n"))
 
-    res, err := cl.doRequest("PUT", url, data, true)
-    err = json.Unmarshal(res, &results)
-    if err != nil {
-        return fmt.Errorf("Unable to update DNS record: %s", err)
-    }
-    if results.Success {
-        return nil
-    } else if !results.Success && results.Errors[0].Code != 0 {
-        b, err := json.Marshal(results)
-        if err != nil {
-           cl. log.Error(err.Error())
-        }
-        cl.log.Info(fmt.Sprintf("Response from cloudflare: %s", string(b)))
-        return fmt.Errorf("Nothing to update")
-    }
-    return nil
+	res, err := cl.doRequest("PUT", url, data, true)
+	err = json.Unmarshal(res, &results)
+	if err != nil {
+		return fmt.Errorf("Unable to update DNS record: %s", err)
+	}
+	if results.Success {
+		return nil
+	} else if !results.Success && results.Errors[0].Code != 0 {
+		b, err := json.Marshal(results)
+		if err != nil {
+			cl.log.Error(err.Error())
+		}
+		cl.log.Info(fmt.Sprintf("Response from cloudflare: %s", string(b)))
+		return fmt.Errorf("Nothing to update")
+	}
+	return nil
 }
