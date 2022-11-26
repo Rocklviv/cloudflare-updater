@@ -2,6 +2,7 @@ name: Go code verify
 on:
     pull_request:
         types: [opened, reopened, edited, synchronize]
+
 jobs:
     build:
 
@@ -25,4 +26,4 @@ jobs:
               with:
                   message: |
                     **Failed PR Check**
-                    ${{ steps.gofmt.outputs.gofmt-output }}
+                    "```${{ steps.gofmt.outputs.* }}```"
