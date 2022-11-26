@@ -19,6 +19,7 @@ jobs:
                   gofmt-path: "./"
                   gofmt-flags: "-l -d"
             - name: Add comment to PR
+              if: failure() && steps.gofmt.outcome == 'failure'
               uses: mshick/add-pr-comment@v2
               with:
                   message: ${{ steps.gofmt.outputs }}
