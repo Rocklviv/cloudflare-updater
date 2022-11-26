@@ -23,7 +23,7 @@ jobs:
         needs: build
         steps:
             - name: Add comment to PR
-              if: failure() && jobs.build.steps.gofmt.outcome == 'failure'
+              if: failure() && needs.job.build.steps.gofmt.outcome == 'failure'
               uses: mshick/add-pr-comment@v2
               with:
                   message: |
