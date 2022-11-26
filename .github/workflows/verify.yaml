@@ -22,5 +22,5 @@ jobs:
               if: failure() && steps.gofmt.outcome == 'failure'
               uses: mshick/add-pr-comment@v2
               with:
-                  message: |
-                  ${{ steps.gofmt.outputs }}
+                  message: Failed PR Check
+                  status: ${{ steps.gofmt.outputs }}
