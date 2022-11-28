@@ -6,24 +6,6 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest
-        outputs:
-            value: ${{ steps.gofmt.outputs.gofmt-output }}
         steps:
-            - uses: actions/checkout@v3
-            - name: Set up Go
-              uses: actions/setup-go@v3
-              with:
-                  go-version: 1.18
-            - name: Check if go fmt is required
-              id: gofmt
-              uses: Rocklviv/gofmt-action@master
-              with:
-                  gofmt-path: "./"
-                  gofmt-flags: "-l"
-            - name: Add comment to PR
-              if: failure()
-              uses: mshick/add-pr-comment@v2
-              with:
-                  message: |
-                    **Failed PR Check**
-                    "${{ steps.gofmt.outputs.*.value }}"
+            - name: Run govet
+              run: go vet ./...
