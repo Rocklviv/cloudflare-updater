@@ -16,7 +16,7 @@ jobs:
                   go-version: 1.18
             - name: Check if go fmt is required
               id: gofmt
-              uses: Rocklviv/gofmt-action
+              uses: Rocklviv/gofmt-action@master
               with:
                   gofmt-path: "./"
                   gofmt-flags: "-d -l"
