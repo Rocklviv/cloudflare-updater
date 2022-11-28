@@ -25,7 +25,7 @@ jobs:
         needs: build
         steps:
             - name: Add comment to PR
-              if: failure()
+              if: always()
               uses: mshick/add-pr-comment@v2
               with:
                   message: |
