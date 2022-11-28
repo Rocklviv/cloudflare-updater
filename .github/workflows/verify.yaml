@@ -6,6 +6,8 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest
+        outputs:
+            value: ${{ steps.gofmt.outputs.gofmt-output }}
         steps:
             - uses: actions/checkout@v3
             - name: Set up Go
@@ -23,9 +25,9 @@ jobs:
         needs: build
         steps:
             - name: Add comment to PR
-              if: failure() && needs.job.build.steps.gofmt.outcome == 'failure'
+              if: failure() && contains(needs.build.result, "failed")
               uses: mshick/add-pr-comment@v2
               with:
                   message: |
                     **Failed PR Check**
-                    "${{ jobs.build.steps.gomft.outputs.gofmt-output.value }}"
+                    "${{ needs.build.output.value }}"
