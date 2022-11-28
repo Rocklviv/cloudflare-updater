@@ -24,7 +24,7 @@ type TGMessage struct {
 
 type TGSender interface {
 	ErrorMsg(msg string)
-    InfoMsg(msg string)
+	InfoMsg(msg string)
 }
 
 func NewTG(log logging.Logger) TGSender {
@@ -52,7 +52,7 @@ func NewTG(log logging.Logger) TGSender {
 
 func (t *tg) ErrorMsg(msg string) {
 	// Generating multiline message
-    msgString := fmt.Sprintf("\xE2\x9D\x8C Error occured \n\r \n\r %s", msg)
+	msgString := fmt.Sprintf("\xE2\x9D\x8C Error occured \n\r \n\r %s", msg)
 	message := TGMessage{
 		ChatID: t.ChatID,
 		Text:   msgString,

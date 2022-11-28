@@ -67,13 +67,14 @@ func Start() {
 	}
 	tgSender.InfoMsg(fmt.Sprintf("CloudFlare DNS Updater started - %s", env))
 	for {
-		ip := ipifyExecutor.GetIP()
-		if ip == "" {
+		ip, err := ipifyExecutor.GetIP()
+		if err != nil {
 			log.Error("failed to get current Public IP")
-			tgSender.ErrorMsg("failed to get current Public IP")
+			tgSender.ErrorMsg(fmt.Sprintf("Failed to get current Public IP \n %s", err))
 			time.Sleep(300 * time.Second)
 			return
 		}
+
 		ok, err := cloudFlareExecutor.CheckForUpdates(ip)
 		if err != nil {
 			log.Error(err.Error())
@@ -85,7 +86,7 @@ func Start() {
 			err = cloudFlareExecutor.Update(ip)
 			if err != nil {
 				log.Error(err.Error())
-                tgSender.ErrorMsg(err.Error())
+				tgSender.ErrorMsg(err.Error())
 				time.Sleep(300 * time.Second)
 				return
 			}
