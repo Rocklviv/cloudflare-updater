@@ -19,7 +19,7 @@ jobs:
               uses: Rocklviv/gofmt-action@master
               with:
                   gofmt-path: "./"
-                  gofmt-flags: "-d"
+                  gofmt-flags: "-l"
             - name: Add comment to PR
               if: failure()
               uses: mshick/add-pr-comment@v2
