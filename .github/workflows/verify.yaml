@@ -8,4 +8,4 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Run govet
-              run: go vet ./...
+              run: go vet ./
