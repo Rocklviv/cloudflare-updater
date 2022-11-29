@@ -20,7 +20,7 @@ type IPiFY interface {
 }
 
 var (
-    retry int8
+	retry int8
 )
 
 func NewIPiFY(ipifyURL string, client *http.Client, log logging.Logger) IPiFY {
@@ -34,15 +34,15 @@ func NewIPiFY(ipifyURL string, client *http.Client, log logging.Logger) IPiFY {
 func (i *ipify) GetIP() (string, error) {
 	resp, err := i.httpClient.Get(i.ipifyURL)
 	if err != nil {
-        retry += 1
+		retry += 1
 		i.log.Error(err.Error())
-        if retry >= 3 {
-            return i.GetIP()
-        }
+		if retry >= 3 {
+			return i.GetIP()
+		}
 		return "", err
 	}
 	if resp.StatusCode == 200 {
-        retry = 0
+		retry = 0
 		body, _ := io.ReadAll(resp.Body)
 		i.log.Info(strings.TrimSuffix(fmt.Sprintln("Current IP:", string(body)), "\n"))
 		return string(body), nil

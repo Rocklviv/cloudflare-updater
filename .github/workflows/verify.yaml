@@ -1,0 +1,13 @@
+name: Go code verify
+on:
+    pull_request:
+        types: [opened, reopened, edited, synchronize]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+            - name: Run govet
+              run: go vet ./

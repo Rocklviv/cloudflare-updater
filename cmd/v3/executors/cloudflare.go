@@ -23,11 +23,13 @@ type cloudFlare struct {
 	domainATypeID string
 }
 
+// CloudExecutor interface
 type CloudExecutor interface {
 	CheckForUpdates(string) (bool, error)
 	Update(string) error
 }
 
+// NewCloudFlareExecutor creates instance of cloudflare executor and returns CloudExecutor interface
 func NewCloudFlareExecutor(apiURL, apiToken, zoneID, domainName string, client *http.Client, log logging.Logger) CloudExecutor {
 	return &cloudFlare{
 		cloudFlareAPIURL:   apiURL,
@@ -105,9 +107,13 @@ func (cl *cloudFlare) Update(ip string) error {
 	cl.log.Info(strings.TrimSuffix(fmt.Sprintln("Request URL: ", url), "\n"))
 
 	res, err := cl.doRequest("PUT", url, data, true)
+	if err != nil {
+		cl.log.Error(err.Error())
+		return fmt.Errorf("Failed to update DNS A record for %s domain", cl.domainName)
+	}
 	err = json.Unmarshal(res, &results)
 	if err != nil {
-		return fmt.Errorf("Unable to update DNS record: %s", err)
+		return fmt.Errorf("Failed to unmarshal json output", err)
 	}
 	if results.Success {
 		return nil
