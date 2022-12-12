@@ -11,6 +11,7 @@ jobs:
         arch: ["armv7", "arm64", "amd64"]
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - name: Setup Buildx
         uses: docker/setup-buildx-action@v2
 
@@ -24,14 +25,9 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       
-      - name: Build
-        run: docker build -t rocklviv/cloudflare-dns-updater -f build/Dockerfile-${{ matrix.arch }} .
-
-      - name: Tag
-        run: docker tag rocklviv/cloudflare-dns-updater ${{ steps.tag.outputs.tag }}-${{ matrix.arch }}
-
-      - name: Push to DockerHub
+      - name: Build and Push
         uses: docker/build-push-action@v3
         with:
+          context: ./build/Dockerfile-${{ matrix.arch }}
           push: true
           tags: rocklviv/cloudflare-dns-updater:${{ steps.tag.outputs.tag }}-${{ matrix.arch }}
