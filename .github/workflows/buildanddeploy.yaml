@@ -8,13 +8,17 @@ jobs:
   build:
     strategy:
       matrix:
-        arch: ["armv7", "arm64", "amd64"]
-        build_platforms: [{"os": "linux/arm/v7", "arch": "arm32v7"}, {"os":"linux/arm64", "arch": "arm64v8"}, {"os":"linux/amd64", "arch":"amd64"}]
+        arch: ["linux/arm/v7", "linux/arm64", "linux/amd64"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Setup Buildx
         uses: docker/setup-buildx-action@v2
+      
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: ${{ matrix.arch }}
 
       - name: Get tag
         run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
@@ -26,12 +30,17 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       
+      - uses: mad9000/actions-find-and-replace-string@2
+        with:
+          source: ${{ matrix.arch }}
+          find: "linux/"
+          replace: ""
+        id: arch
+
       - name: Build and Push
         uses: docker/build-push-action@v3
         with:
           file: ./build/docker/Dockerfile
           push: true
-          tags: rocklviv/cloudflare-dns-updater:${{ steps.tag.outputs.tag }}-${{ matrix.build_platforms.arch }}
-          platforms: linux/${{ matrix.build_platforms.os }}
-          build-args:
-            BUILD_ARCH: ${{ matrix.build_platforms.arch }}
+          tags: rocklviv/cloudflare-dns-updater:${{ steps.tag.outputs.tag }}-${{ steps.arch.value }}
+          platforms: ${{ matrix.arch }}
