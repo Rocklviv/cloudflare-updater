@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         arch: ["armv7", "arm64", "amd64"]
-        build_platforms: ["arm32v7", "arm64v8", "amd64"]
+        build_platforms: [{"os": "linux/arm/v7", "arch": "arm32v7"}, {"os":"linux/arm64", "arch": "arm64v8"}, {"os":"linux/amd64", "arch":"amd64"}]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -29,7 +29,9 @@ jobs:
       - name: Build and Push
         uses: docker/build-push-action@v3
         with:
-          file: ./build/docker/Dockerfile-${{ matrix.arch }}
+          file: ./build/docker/Dockerfile
           push: true
-          tags: rocklviv/cloudflare-dns-updater:${{ steps.tag.outputs.tag }}-${{ matrix.build_platforms }}
-          platforms: linux/${{ matrix.build_platforms }}
+          tags: rocklviv/cloudflare-dns-updater:${{ steps.tag.outputs.tag }}-${{ matrix.build_platforms.arch }}
+          platforms: linux/${{ matrix.build_platforms.os }}
+          build-args:
+            BUILD_ARCH: ${{ matrix.build_platforms.arch }}
