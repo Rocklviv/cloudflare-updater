@@ -33,14 +33,24 @@ jobs:
       - uses: mad9000/actions-find-and-replace-string@2
         with:
           source: ${{ matrix.arch }}
-          find: ["linux/", "/7"]
+          find: "linux/"
           replace: ""
         id: arch
 
       - name: Build and Push
         uses: docker/build-push-action@v3
+        if: ${{ matrix.arch }} != "linux/arm/v7"
         with:
           file: ./build/docker/Dockerfile
           push: true
           tags: rocklviv/cloudflare-dns-updater:${{ steps.tag.outputs.tag }}-${{ steps.arch.outputs.value }}
+          platforms: ${{ matrix.arch }}
+
+      - name: Build and Push (armv7)
+        uses: docker/build-push-action@v3
+        if: ${{ matrix.arch }} == "linux/arm/v7"
+        with:
+          file: ./build/docker/Dockerfile
+          push: true
+          tags: rocklviv/cloudflare-dns-updater:${{ steps.tag.outputs.tag }}-armv7
           platforms: ${{ matrix.arch }}
