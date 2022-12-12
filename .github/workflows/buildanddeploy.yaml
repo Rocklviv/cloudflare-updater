@@ -39,7 +39,7 @@ jobs:
 
       - name: Build and Push
         uses: docker/build-push-action@v3
-        if: ${{ matrix.arch }} != "linux/arm/v7"
+        if: matrix.arch != "linux/arm/v7"
         with:
           file: ./build/docker/Dockerfile
           push: true
@@ -48,7 +48,7 @@ jobs:
 
       - name: Build and Push (armv7)
         uses: docker/build-push-action@v3
-        if: ${{ matrix.arch }} == "linux/arm/v7"
+        if: matrix.arch == "linux/arm/v7"
         with:
           file: ./build/docker/Dockerfile
           push: true
