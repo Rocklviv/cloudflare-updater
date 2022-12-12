@@ -2,13 +2,26 @@ package executors
 
 import "net/http"
 
-// CloudDNSResult represent API response from CloudFlareDNS API
-type CloudDNSResult struct {
+type CloudDNSINfoResult struct {
 	Success    bool       `json:"success"`
 	Errors     []Errors   `json:"errors"`
 	Messages   []Messages `json:"messages"`
-	ResultInfo struct{}   `json:"result_info"`
-	Result     []Result   `json:"result"`
+	ResultInfo struct {
+		Page       int `json:"page"`
+		PerPage    int `json:"per_page"`
+		Count      int `json:"count"`
+		TotalCount int `json:"total_count"`
+		TotalPages int `json:"total_pages"`
+	}
+	Result []Result `json:"result"`
+}
+
+// CloudDNSResult represent API response from CloudFlareDNS API
+type CloudDNSResult struct {
+	Success  bool       `json:"success"`
+	Errors   []Errors   `json:"errors"`
+	Messages []Messages `json:"messages"`
+	Result   Result     `json:"result"`
 }
 
 // Errors from API
@@ -57,4 +70,11 @@ type Configurator struct {
 	cloudFlareZONEID   string
 	domainName         string
 	domainATypeID      string
+}
+
+// MyIP Response
+type MYIPResponse struct {
+	IP      string `json:"ip"`
+	Country string `json:"country"`
+	CC      string `json:"cc"`
 }
