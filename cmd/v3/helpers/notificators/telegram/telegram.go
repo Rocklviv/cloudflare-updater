@@ -29,7 +29,7 @@ type TGSender interface {
 
 func NewTG(log logging.Logger) TGSender {
 	if os.Getenv("TELEGRAM_CHAT_ID") == "" {
-		log.Error(fmt.Sprintf("ENV variable TELEGRAM_CHAT_ID is not set"))
+		log.Error("ENV variable TELEGRAM_CHAT_ID is not set")
 		return nil
 	}
 	id := os.Getenv("TELEGRAM_CHAT_ID")
@@ -39,7 +39,7 @@ func NewTG(log logging.Logger) TGSender {
 		return nil
 	}
 	if os.Getenv("TELEGRAM_API_KEY") == "" {
-		log.Error(fmt.Sprintf("ENV variable TELEGRAM_API_KEY is not set"))
+		log.Error("ENV variable TELEGRAM_API_KEY is not set")
 		return nil
 	}
 	apiKey := os.Getenv("TELEGRAM_API_KEY")
@@ -81,7 +81,6 @@ func (t *tg) ErrorMsg(msg string) {
 		return
 	}
 	t.Log.Info(response.Status)
-	return
 }
 
 func (t *tg) InfoMsg(msg string) {
@@ -115,5 +114,4 @@ func (t *tg) InfoMsg(msg string) {
 		return
 	}
 	t.Log.Info(response.Status)
-	return
 }

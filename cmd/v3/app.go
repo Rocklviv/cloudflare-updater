@@ -13,7 +13,7 @@ import (
 var (
 	log                logging.Logger
 	cloudFlareExecutor executors.CloudExecutor
-	ipifyExecutor      executors.IPiFY
+	ipInfoExecutor     executors.IMyIP
 
 	cloudFlareAPIToken string
 	cloudFlareAPIURL   = "https://api.cloudflare.com/client/v4"
@@ -24,6 +24,7 @@ var (
 	telegramChatID     int64
 	telegramBotName    string
 	tgSender           telegram.TGSender
+	ipInfoProvider     string
 )
 
 func getSetVars(envVarName string) string {
@@ -41,15 +42,17 @@ func prepare() {
 	cloudFlareAPIToken = getSetVars("CLOUDFLARE_TOKEN")
 	cloudFlareZoneID = getSetVars("CLOUDFLARE_ZONE_ID")
 	domainName = getSetVars("DOMAIN_NAME")
+	ipInfoProvider = getSetVars("IP_INFO_PROVIDER")
 
 	log.Info("Create http.Client")
 	client := &http.Client{}
 	log.Info("Creating instance of CloudFlare executor")
 	// Creates instance of CloudFlare executor
 	cloudFlareExecutor = executors.NewCloudFlareExecutor(cloudFlareAPIURL, cloudFlareAPIToken, cloudFlareZoneID, domainName, client, log)
-	log.Info("Creating instance of IPiFY executor")
+	log.Info("Creating instance of IP Info executor")
 	// Creates instance of IPiFY executor
-	ipifyExecutor = executors.NewIPiFY(ipifyURL, client, log)
+	ipInfoExecutor = executors.NewMyIP(ipInfoProvider, client, log)
+
 	log.Info("Creating instance of Telegram bot message sender")
 	tgSender = telegram.NewTG(log)
 	if tgSender == nil {
@@ -67,7 +70,7 @@ func Start() {
 	}
 	tgSender.InfoMsg(fmt.Sprintf("CloudFlare DNS Updater started - %s", env))
 	for {
-		ip, err := ipifyExecutor.GetIP()
+		ip, err := ipInfoExecutor.GetIP()
 		if err != nil {
 			log.Error("failed to get current Public IP")
 			tgSender.ErrorMsg(fmt.Sprintf("Failed to get current Public IP \n %s", err))

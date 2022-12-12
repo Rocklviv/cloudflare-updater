@@ -61,7 +61,7 @@ func (cl *cloudFlare) doRequest(reqType, url string, data []byte, headers bool) 
 }
 
 func (cl *cloudFlare) CheckForUpdates(ip string) (bool, error) {
-	var results CloudDNSResult
+	var results CloudDNSINfoResult
 	url := fmt.Sprintf("%s/zones/%s/%s?type=A", cl.cloudFlareAPIURL, cl.cloudFlareZoneID, "dns_records")
 	cl.log.Info(strings.TrimSuffix(fmt.Sprintln("Request URL: ", url), "\n"))
 
@@ -72,6 +72,7 @@ func (cl *cloudFlare) CheckForUpdates(ip string) (bool, error) {
 
 	err = json.Unmarshal(res, &results)
 	if err != nil {
+		cl.log.Error(fmt.Sprintf("%v", string(res)))
 		return false, fmt.Errorf("GetDNS Records. Unable to unmarshal json. %s", err)
 	}
 
@@ -100,7 +101,7 @@ func (cl *cloudFlare) Update(ip string) error {
 	})
 
 	if err != nil {
-		return fmt.Errorf("Cannot marshal object")
+		return fmt.Errorf("cannot marshal object %s", err)
 	}
 
 	url := fmt.Sprintf("%s/zones/%s/dns_records/%s", cl.cloudFlareAPIURL, cl.cloudFlareZoneID, cl.domainATypeID)
@@ -109,13 +110,15 @@ func (cl *cloudFlare) Update(ip string) error {
 	res, err := cl.doRequest("PUT", url, data, true)
 	if err != nil {
 		cl.log.Error(err.Error())
-		return fmt.Errorf("Failed to update DNS A record for %s domain", cl.domainName)
+		return fmt.Errorf("failed to update DNS A record for %s domain", cl.domainName)
 	}
 	err = json.Unmarshal(res, &results)
 	if err != nil {
-		return fmt.Errorf("Failed to unmarshal json output", err)
+		cl.log.Error(fmt.Sprintf("%v", string(res)))
+		return fmt.Errorf("failed to unmarshal json output %v", err)
 	}
 	if results.Success {
+		cl.log.Info(fmt.Sprintf("Successfully updated DNS record, modified on: %s", results.Result.ModifiedOn))
 		return nil
 	} else if !results.Success && results.Errors[0].Code != 0 {
 		b, err := json.Marshal(results)
@@ -123,7 +126,7 @@ func (cl *cloudFlare) Update(ip string) error {
 			cl.log.Error(err.Error())
 		}
 		cl.log.Info(fmt.Sprintf("Response from cloudflare: %s", string(b)))
-		return fmt.Errorf("Nothing to update")
+		return fmt.Errorf("nothing to update")
 	}
 	return nil
 }
