@@ -28,6 +28,7 @@ jobs:
       - name: Build and Push
         uses: docker/build-push-action@v3
         with:
-          context: ./build/Dockerfile-${{ matrix.arch }}
+          context: .
+          file: ./build/Dockerfile-${{ matrix.arch }}
           push: true
           tags: rocklviv/cloudflare-dns-updater:${{ steps.tag.outputs.tag }}-${{ matrix.arch }}
