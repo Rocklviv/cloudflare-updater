@@ -5,10 +5,10 @@ on:
       - "*.*.*"
 
 jobs:
-  strategy:
-    matrix:
-      arch: ["armv7", "arm64", "amd64"]
   build:
+    strategy:
+      matrix:
+        arch: ["armv7", "arm64", "amd64"]
     runs-on: ubuntu-latest
     steps:
       - name: Setup Buildx
