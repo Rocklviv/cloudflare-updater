@@ -5,11 +5,14 @@ on:
       - "*.*.*"
 
 jobs:
-  build:
+  prepare:
     strategy:
       matrix:
         arch: ["linux/arm/v7", "linux/arm64", "linux/amd64"]
     runs-on: ubuntu-latest
+    outputs:
+      arch: steps.arch.outputs.value
+      list_archs: steps.list-arch.outputs.matrix
     steps:
       - uses: actions/checkout@v3
       - name: Setup Buildx
@@ -36,19 +39,28 @@ jobs:
           find: "linux/"
           replace: ""
         id: arch
+      
+      - id: list-archs
+        run: echo "::set-output name=matrix::${{ join(matrix.arch, ',')}}"
 
+  build:
+    strategy:
+      matrix:
+        arch: ["linux/arm/v7", "linux/arm64", "linux/amd64"]
+    runs-on: ubuntu-latest
+    steps:
       - name: Build and Push
         uses: docker/build-push-action@v3
-        if: matrix.arch != "linux/arm/v7"
+        if: ! contains(needs.prepare.outputs.list-arch, "linux/arm/v7")
         with:
           file: ./build/docker/Dockerfile
           push: true
-          tags: rocklviv/cloudflare-dns-updater:${{ steps.tag.outputs.tag }}-${{ steps.arch.outputs.value }}
+          tags: rocklviv/cloudflare-dns-updater:${{ steps.tag.outputs.tag }}-${{ needs.prepare.outputs.arch }}
           platforms: ${{ matrix.arch }}
 
       - name: Build and Push (armv7)
         uses: docker/build-push-action@v3
-        if: matrix.arch == "linux/arm/v7"
+        if: contains(needs.prepare.outputs.list-arch, "linux/arm/v7")
         with:
           file: ./build/docker/Dockerfile
           push: true
