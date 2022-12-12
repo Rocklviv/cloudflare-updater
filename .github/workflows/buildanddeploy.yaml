@@ -31,4 +31,4 @@ jobs:
           file: ./build/docker/Dockerfile-${{ matrix.arch }}
           push: true
           tags: rocklviv/cloudflare-dns-updater:${{ steps.tag.outputs.tag }}-${{ matrix.arch }}
-          platform: linux/${{ matrix.arch }}
+          platforms: linux/${{ matrix.arch }}
