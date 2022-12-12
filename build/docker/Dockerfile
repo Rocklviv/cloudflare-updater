@@ -1,8 +1,8 @@
 FROM --platform=${BUILDPLATFORM} golang:1.18-alpine as builder
-ARG BUILD_ARCH
-ADD ./ /build
 ENV USER=appuser
 ENV UID=10001
+
+ADD ./ /build
 RUN adduser \
   --disabled-password \
   --gecos "" \
@@ -14,7 +14,7 @@ RUN adduser \
 RUN apk --no-cache add ca-certificates
 
 WORKDIR /build
-RUN GOOS=linux GOARCH=${BUILD_ARCH} go build -ldflags="-w -s" -o dns-checker .
+RUN go build -ldflags="-w -s" -o dns-checker .
 
 FROM --platform=${BUILDPLATFORM} scratch
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
