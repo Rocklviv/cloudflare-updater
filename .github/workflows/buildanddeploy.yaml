@@ -33,7 +33,7 @@ jobs:
       - uses: mad9000/actions-find-and-replace-string@2
         with:
           source: ${{ matrix.arch }}
-          find: "linux/"
+          find: ["linux/", "/7"]
           replace: ""
         id: arch
 
