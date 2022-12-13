@@ -32,38 +32,31 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      
-      - uses: mad9000/actions-find-and-replace-string@2
-        with:
-          source: ${{ matrix.arch }}
-          find: "linux/"
-          replace: ""
-        id: arch
-      
-      - id: list-archs
-        run: echo "::set-output name=matrix::${{ join(matrix.arch, ',')}}"
 
   build:
     needs: ["prepare"]
-    strategy:
-      matrix:
-        arch: ["linux/arm/v7", "linux/arm64", "linux/amd64"]
     runs-on: ubuntu-latest
     steps:
-      - name: Build and Push
+      - name: Build and Push (arm64)
         uses: docker/build-push-action@v3
-        if: "!contains(needs.prepare.outputs.list-arch, 'linux/arm/v7')"
         with:
           file: ./build/docker/Dockerfile
           push: true
-          tags: rocklviv/cloudflare-dns-updater:${{ steps.tag.outputs.tag }}-${{ needs.prepare.outputs.arch }}
-          platforms: ${{ matrix.arch }}
+          tags: rocklviv/cloudflare-dns-updater:${{ steps.tag.outputs.tag }}-arm64
+          platforms: "linux/arm64"
 
       - name: Build and Push (armv7)
         uses: docker/build-push-action@v3
-        if: "contains(needs.prepare.outputs.list-arch, 'linux/arm/v7')"
         with:
           file: ./build/docker/Dockerfile
           push: true
           tags: rocklviv/cloudflare-dns-updater:${{ steps.tag.outputs.tag }}-armv7
-          platforms: ${{ matrix.arch }}
+          platforms: "linux/arm/v7"
+      
+      - name: Build and Push (amd64)
+        uses: docker/build-push-action@v3
+        with:
+          file: ./build/docker/Dockerfile
+          push: true
+          tags: rocklviv/cloudflare-dns-updater:${{ steps.tag.outputs.tag }}-amd64
+          platforms: "linux/amd64"
