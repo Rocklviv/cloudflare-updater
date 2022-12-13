@@ -11,9 +11,9 @@ jobs:
         arch: ["linux/arm/v7", "linux/arm64", "linux/amd64"]
     runs-on: ubuntu-latest
     outputs:
-      arch: steps.arch.outputs.value
-      list_archs: steps.list-arch.outputs.matrix
-      tag: steps.tag.outputs.tag
+      arch: ${{ steps.arch.outputs.value }}
+      list_archs: ${{ steps.list-arch.outputs.matrix }}
+      tag: ${{ steps.tag.outputs.tag }}
     steps:
       - uses: actions/checkout@v3
       - name: Setup Buildx
