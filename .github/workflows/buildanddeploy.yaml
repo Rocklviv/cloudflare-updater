@@ -27,6 +27,7 @@ jobs:
       - name: Build and Push (arm64)
         uses: docker/build-push-action@v3
         with:
+          context: .
           file: ./build/docker/Dockerfile
           push: true
           tags: rocklviv/cloudflare-dns-updater:${{ steps.tag.outputs.tag }}-arm64
@@ -35,6 +36,7 @@ jobs:
       - name: Build and Push (armv7)
         uses: docker/build-push-action@v3
         with:
+          context: .
           file: ./build/docker/Dockerfile
           push: true
           tags: rocklviv/cloudflare-dns-updater:${{ steps.tag.outputs.tag }}-armv7
@@ -43,6 +45,7 @@ jobs:
       - name: Build and Push (amd64)
         uses: docker/build-push-action@v3
         with:
+          context: .
           file: ./build/docker/Dockerfile
           push: true
           tags: rocklviv/cloudflare-dns-updater:${{ steps.tag.outputs.tag }}-amd64
