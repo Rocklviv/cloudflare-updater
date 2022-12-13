@@ -32,6 +32,8 @@ jobs:
           push: true
           tags: rocklviv/cloudflare-dns-updater:${{ steps.tag.outputs.tag }}-arm64
           platforms: "linux/arm64"
+          build-args:
+            ARCH: "arm64"
 
       - name: Build and Push (armv7)
         uses: docker/build-push-action@v3
@@ -41,6 +43,8 @@ jobs:
           push: true
           tags: rocklviv/cloudflare-dns-updater:${{ steps.tag.outputs.tag }}-armv7
           platforms: "linux/arm/v7"
+          build-args:
+            ARCH: "arm"
       
       - name: Build and Push (amd64)
         uses: docker/build-push-action@v3
@@ -50,3 +54,5 @@ jobs:
           push: true
           tags: rocklviv/cloudflare-dns-updater:${{ steps.tag.outputs.tag }}-amd64
           platforms: "linux/amd64"
+          build-args:
+            ARCH: "amd64"
