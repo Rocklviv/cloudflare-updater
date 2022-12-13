@@ -40,7 +40,7 @@ jobs:
           context: .
           file: ./build/docker/Dockerfile
           push: true
-          build-args: "BUILD_ARCH=arm64"
+          build-args: "BUILD_ARCH=arm,GOARM=7"
           tags: rocklviv/cloudflare-dns-updater:${{ steps.tag.outputs.tag }}-armv7
           platforms: linux/arm/v7
 
